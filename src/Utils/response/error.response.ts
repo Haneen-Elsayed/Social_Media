@@ -27,6 +27,11 @@ constructor (message: string, options?: ErrorOptions) {
 super (message, 409, options);
 }}
 
+export class UnAuthorizedException extends ApplicationException{
+constructor (message: string, options?: ErrorOptions) {
+super (message, 401, options);
+}}
+
 
 export interface IError extends Error {
   statusCode: number;

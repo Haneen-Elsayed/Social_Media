@@ -9,6 +9,14 @@ password: generalfields.password,
 })
 };
 
+
+export const confirmEmailSchema ={
+body: z.strictObject ({
+  email:generalfields.email,
+  otp: generalfields.otp,
+})
+};
+
 export const signUpschema = {
 body: z.strictObject ({
   username: generalfields.username,

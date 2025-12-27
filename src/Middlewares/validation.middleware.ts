@@ -46,5 +46,6 @@ export const generalfields ={
       .max(30, { error: "Username must be at most 30 cahracters long" }),
   email: z.email({ error: "Invalid Email Address" }),
   password: z.string(),
-  confirmPassword: z.string(),  
+  confirmPassword: z.string(), 
+  otp: z.string().regex(/^\d{6}$/),
 }
