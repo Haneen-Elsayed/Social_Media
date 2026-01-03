@@ -10,3 +10,5 @@ console.log(`Error: ${(error as Error).message}`);
  }
 };
 export default connectDB;
+
+

@@ -12,15 +12,20 @@ export interface IUser {
      firstName: string;
      lastName: string;
      username?:string;
+
      email: string;
      confirmEmailoTp?: string;
      confirmedat?: Date;
+    changeCredientialsTime: Date;
+
      password: string;
      resetPasswordOTP?: string;
      phone?: string;
     address?:string
     gender: GenderEnum;
     role:RoleEnum;
+    profileImage: strings;
+
 
     createdat: Date;
      updatedAt?: Date;
@@ -34,10 +39,12 @@ export const userSchema = new Schema<IUser>(
       email: {type: String, required: true, unique: true },
       confirmEmailoTp: String,
       confirmedat: Date,
+      changeCredientialsTime: Date,
       password: { type: String, required: true },  
       resetPasswordOTP: String,
        phone: String,
        address: String,
+       profileImage:String,
       gender:{
       type: String,
       enum: Object.values(GenderEnum),

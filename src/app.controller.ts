@@ -10,6 +10,7 @@ import rateLimit from "express-rate-limit";
 import path from "node:path";
 import { config } from "dotenv";
 
+import userRouter from "./Modules/User/user.controller";
 import authRouter from "./Modules/Auth/auth.controller";
 
 config({ path: path.resolve("./config/.env.dev") });
@@ -35,6 +36,7 @@ export const bootstrap = () => {
 
   /* Routes */
   app.use("/api/v1/auth", authRouter);
+  app.use("/api/v1/user", userRouter);
 
   app.use((_req: Request, res: Response) => {
     res.status(404).json({ message: "Not Found Handler" });

@@ -9,7 +9,7 @@ router.post("/login",authservice.login);
 router.patch(
     "/confirm-email",
     validation (confirmEmailSchema),
-    authService.confirmEmail
+    authservice.confirmEmail
 );
 
 

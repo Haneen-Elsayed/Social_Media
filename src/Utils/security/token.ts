@@ -2,6 +2,7 @@ import { sign, verify, Secret, SignOptions, JwtPayload } from "jsonwebtoken";
 import {RoleEnum}from"../../DB/models/user.model";
 import  {v4 as uuid}  from "uuid";
 import { HUserDocument } from "../../DB/models/user.model";
+import { TokenModel } from "../../DB/models/token.model";
 
 export enum SignatureLevelEnum {
    USER = "USER",
@@ -10,6 +11,10 @@ export enum SignatureLevelEnum {
  export enum TokenTypeEnum{
    USER ="USER",
    ADMIN = "ADMIN",
+ }
+  export enum LogoutEnum{
+   ONLY ="ONLY",
+   ALL = "ALL",
  }
 
 export const generateToken = async ({
@@ -111,7 +116,10 @@ export const decodedToken = async({
    authorization: string;
    tokenType?: TokenTypeEnum;
 })=> {
- const userModel = new UserRepository(UserModel);
+ const userModel = new UserRepository(userModel);
+ const tokenModel = new TokenRepository(tokenModel);
+
+
  const [bearer, token] = authorization.split(" ");
 if (!bearer || !token) throw new UnAuthorizedException("Missing Token Parts");
 const signatures = await getSignature(bearer as SignatureLevelEnum);
@@ -128,10 +136,33 @@ const decoded = await verifyToken({
 if (!decoded?._id || !decoded.iat)
  throw new UnAuthorizedException("Invalid Token Payload");
 
+if (await TokenModel.findById({ id:{jti: decoded.jti}}))
+  throw new NotFoundException("Invalid or old login credentials");
+
  const user = await userModel.findOne({ filter: {_id: decoded._id} });
 if (!user) throw new NotFoundException("User Not Found");
-
- return {user, decoded };
+  
+ if (user.changeCredientialsTime?.getTime() || 0 > decoded.iat * 1000)
+     throw new UnAuthorizedException("Loggedout From All Devices");
+   return {user, decoded };
 }
 
 
+  export const createRevokeToken =async (decoded: JwtPayload) =>{
+
+  const tokenModel = new TokenRepository (TokenModel);
+   
+   const [results] =
+      (await tokenModel.create({
+         data:[
+       {
+         jti: decoded.jti as string,
+        expiresIn: decoded.iat as number,
+        userId: decoded._id,
+       },
+      ],
+      })) || [];
+  
+  if (!results) throw new BadRequestException("Fail to revoke token");
+      return results;
+    };
